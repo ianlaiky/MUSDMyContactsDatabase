@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MyContactsDatabase</string>
+
+
+    <string name="name">Name</string>
+    <string name="mobilenumber">Mobile number</string>
+
+    <string name="noitems">There is no contacts yet. Start adding now</string>
+</resources>
