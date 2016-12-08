@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     // Step 31 - Declare a MyContacts object.
     MyContacts mc;
 
-
     /**
      * Called when the activity is first created.
      */
@@ -63,25 +62,27 @@ public class MainActivity extends AppCompatActivity {
     //step 33 - add retreiveContacts method
 
     private void retrieveContacts() {
+
         List<String> contactList;
 
         Cursor myCursor;
         String myString = "";
 
-        contactList = mc.retrieveAll(getApplicationContext());
+        contactList = mc.retriveAll(getApplicationContext());
 
         contactsAdapter = null;
-
-        contactsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, contactList);
-
+        contactsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                contactList);
         contactsLV.setAdapter(contactsAdapter);
-
     }
 
     @Override
     protected void onResume() {
+
+
         // TODO Auto-generated method stub
         //step 35 - call retrieveContacts();
+
         retrieveContacts();
         toggleVisibility();
         super.onResume();
@@ -119,17 +120,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         // TODO Auto-generated method stub
-
         if (item.getItemId() == 0) {
-            //remove contact when context menu item is selected
-
             AdapterView.AdapterContextMenuInfo info =
                     (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
+            mc.deleteFrmDatabase(info.position, getApplicationContext());
+
             retrieveContacts();
-
             toggleVisibility();
-
         }
 
         return super.onContextItemSelected(item);

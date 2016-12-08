@@ -32,67 +32,61 @@ public class MyDbAdapter {
 
     public MyDbAdapter(Context _context) {
         this.context = _context;
+        dbHelper = new MyDBOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
+
 
         //step 16 - create MyDBOpenHelper object
-
-        dbHelper = new MyDBOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
 
 
     }
 
     public void close() {
-        //step 17 - close db
 
         _db.close();
+        Log.w(MYDBADAPTER_LOG_CAT, "DB closed");
+        //step 17 - close db
 
     }
 
     public void open() throws SQLiteException {
+
+        try {
+            _db = dbHelper.getWritableDatabase();
+            Log.w(MYDBADAPTER_LOG_CAT, "DB closed");
+        } catch (SQLiteException e) {
+
+            _db = dbHelper.getWritableDatabase();
+            Log.w(MYDBADAPTER_LOG_CAT, "DB opened as readable database");
+
+        }
         //step 18 - open db
-       try{
-           _db = dbHelper.getWritableDatabase();
-           Log.w(MYDBADAPTER_LOG_CAT,"DB opened as writable databse");
-
-       }catch (SQLiteException e){
-
-           _db=dbHelper.getReadableDatabase();
-           Log.w(MYDBADAPTER_LOG_CAT,"DB opened as readable database");
-       }
 
 
     }
 
     public long insertEntry(String entryName, String entryTel) {
-        //step 19 - insert record into table
-
-        //create a new record
         ContentValues newEntryValues = new ContentValues();
 
-        //assign values for each row
         newEntryValues.put(ENTRY_NAME, entryName);
         newEntryValues.put(ENTRY_TEL, entryTel);
 
-        //insert the row
-        Log.w(MYDBADAPTER_LOG_CAT, "Inserted EntryName = " + entryName +
-                "EntryTel = " + entryTel + " into table " + DATABASE_TABLE);
+        Log.w(MYDBADAPTER_LOG_CAT, "Inserted EntryName = " + entryName + "EntryTel = " +
+                entryTel + "into table" + DATABASE_TABLE);
 
         return _db.insert(DATABASE_TABLE, null, newEntryValues);
-
+        //step 19 - insert record into table
 
     }
 
     public boolean removeEntry(long _rowIndex) {
+
+        if (_db.delete(DATABASE_TABLE, KEY_ID + "=" + _rowIndex, null) <= 0) {
+            Log.w(MYDBADAPTER_LOG_CAT, "Removing entry where id = " + _rowIndex + "Failed");
+            return false;
+        }
+        Log.w(MYDBADAPTER_LOG_CAT, "Removing entry where id = " + _rowIndex + "Success");
         //step 20 - remove record from table
 
-
-        if (_db.delete(DATABASE_TABLE, KEY_ID + " = " + _rowIndex, null) <= 0) {
-
-            Log.w(MYDBADAPTER_LOG_CAT, "Removing entry where id = " + _rowIndex + " Failed");
-            return false;
-
-
-        }
-        Log.w(MYDBADAPTER_LOG_CAT, "Removing entry where id = " + _rowIndex + " Success");
 
         return true;
 
@@ -105,18 +99,19 @@ public class MyDbAdapter {
     }
 
     public Cursor retrieveAllEntriesCursor() {
-        //step 21 - retrieve all records from table
-       Cursor c = null;
 
-        try{
-            c = _db.query(DATABASE_TABLE, new String[]{KEY_ID,ENTRY_NAME,ENTRY_TEL},null,null,null,null,null);
+        Cursor c = null;
 
-        }catch(SQLiteException e){
+        try {
+            c = _db.query(DATABASE_TABLE, new String[]{KEY_ID, ENTRY_NAME, ENTRY_TEL},
+                    null, null, null, null, null);
+        } catch (SQLiteException e) {
+            Log.w(MYDBADAPTER_LOG_CAT, "Retrieve fail!");
 
-            Log.w(MYDBADAPTER_LOG_CAT,"Retrieve fail!");
         }
 
         return c;
+        //step 21 - retrieve all records from table
     }
 
     public class MyDBOpenHelper extends SQLiteOpenHelper {
@@ -129,9 +124,9 @@ public class MyDbAdapter {
         public void onCreate(SQLiteDatabase db) {
             // TODO Auto-generated method stub
 
-            //step 14 - execute create sql statement
             db.execSQL(DATABASE_CREATE);
-            Log.w(MYDBADAPTER_LOG_CAT, "Helper : DB " + DATABASE_TABLE + " Created!!");
+            Log.w(MYDBADAPTER_LOG_CAT, "Helper : DB " + DATABASE_TABLE + "Created!!");
+            //step 14 - execute create sql statement
 
 
         }

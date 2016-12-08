@@ -8,38 +8,36 @@ import android.widget.EditText;
 
 public class AddContactActivity extends AppCompatActivity {
 
-	Button myAddRecordBtn;
-	EditText addNameET;
-	EditText addNumET;
-	MyContacts mc;
+    Button myAddRecordBtn;
+    EditText addNameET;
+    EditText addNumET;
+    MyContacts mc;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_contact);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_contact);
 
-		addNameET = (EditText) findViewById(R.id.addNameET);
-		addNumET = (EditText) findViewById(R.id.addNumET);
-		myAddRecordBtn = (Button) findViewById(R.id.addRecordsBtn);
+        addNameET = (EditText) findViewById(R.id.addNameET);
+        addNumET = (EditText) findViewById(R.id.addNumET);
+        myAddRecordBtn = (Button) findViewById(R.id.addRecordsBtn);
+        //step 36 - add listener to add contact into database
+        mc = MyContacts.getInstance();
+        myAddRecordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String addNameStr = addNameET.getText().toString();
+                String addNumberStr = addNumET.getText().toString();
+                mc.addToDatabase(addNameStr, addNumberStr, getApplicationContext());
+                finish();
 
-		//step 36 - add listener to add contact into database
-
-		mc = MyContacts.getInstance();
-		myAddRecordBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				String addNameStr = addNameET.getText().toString();
-				String addNumberStr = addNumET.getText().toString();
-
-				mc.addToDatabase(addNameStr,addNumberStr,getApplicationContext());
-
-				finish();
-			}
-		});
+            }
+        });
 
 
-	}
 
+
+    }
 
 
 }
